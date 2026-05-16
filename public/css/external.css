@@ -1333,7 +1333,7 @@ ul{
         width: 100%;
         min-height: 520px;
         height: 620px;
-        background-image: url(/images/sky_airplane.jpg);
+        background-image: url(images/sky_airplane.jpg);
         background-size: cover;
         background-position: center;
         position: relative;
