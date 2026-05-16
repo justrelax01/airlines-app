@@ -15,7 +15,7 @@ class CreatePaymentsTable extends Migration
     {
       Schema::create('payments', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('flight_booking_id')->constrained()->onDelete('cascade');
+    $table->foreignId('booking_id')->constrained('bookings')->onDelete('cascade');
     $table->enum('method', ['credit_card', 'cash']);
     $table->decimal('amount', 8, 2);
     // Credit card fields (nullable for cash)

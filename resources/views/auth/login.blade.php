@@ -13,7 +13,7 @@
     <section class="nav-bar">
       <div class="nav-container">
         <div class="brand">
-          <a href="{{ route('home') }}"><img src="" /><img /></a>
+          <a href="{{ route('home') }}" style="font-weight:700;font-size:1.2rem;color:#2563eb;text-decoration:none;">SkyWings</a>
         </div>
         <nav>
           <div class="nav-mobile">

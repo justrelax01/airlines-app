@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\HotelBookingController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\PaymentController;
 
 // Public pages
 Route::get('/home', fn() => view('pages.home'))->name('home');
@@ -19,7 +22,19 @@ Route::post('/register', [RegisterController::class, 'submit'])->name('register.
 Route::post('/login', [LoginController::class, 'submit'])->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// Form submission routes (accessible to guests and authenticated users)
+Route::post('/bookhotel', [HotelBookingController::class, 'store'])->name('hotel.book');
+Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+Route::post('/payment', [PaymentController::class, 'store'])->middleware('auth')->name('payment.store');
+
 // Protected pages
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
+    Route::get('/dashboard', function () {
+        $bookings = auth()->user()
+            ->bookings()
+            ->with(['flight', 'payment'])
+            ->latest()
+            ->get();
+        return view('dashboard', compact('bookings'));
+    })->name('dashboard');
 });

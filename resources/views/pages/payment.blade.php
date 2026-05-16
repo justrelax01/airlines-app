@@ -314,34 +314,55 @@
 
 @section('scripts')
 <script>
-    const raw = sessionStorage.getItem('selectedFlight');
-    const flight = raw ? JSON.parse(raw) : null;
     const TAX_RATE = 0.15;
+    let flightData = null;
+
+    const raw      = sessionStorage.getItem('selectedFlight');
+    const selected = raw ? JSON.parse(raw) : null; // { flightId, passengers }
+
+    function fmtDate(dt) {
+        return new Date(dt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
 
     function populateSummary(f) {
-        if (!f) return;
-        const subtotal = f.price;
-        const tax = +(subtotal * TAX_RATE).toFixed(2);
-        const total = subtotal + tax;
+        const subtotal = f.price * f.passengers;
+        const tax      = +(subtotal * TAX_RATE).toFixed(2);
+        const total    = subtotal + tax;
 
-        document.getElementById('sum-id').textContent = f.id;
-        document.getElementById('sum-route').textContent = `${f.from.iata} → ${f.to.iata}`;
-        document.getElementById('sum-date').textContent = f.from.date;
+        document.getElementById('sum-id').textContent        = f.flight_number;
+        document.getElementById('sum-route').textContent     = `${f.origin} → ${f.destination}`;
+        document.getElementById('sum-date').textContent      = fmtDate(f.departure_time);
         document.getElementById('sum-passengers').textContent = f.passengers;
-        document.getElementById('sum-subtotal').textContent = `$${subtotal.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-        document.getElementById('sum-tax').textContent = `$${tax.toLocaleString('en-US', {minimumFractionDigits:2})}`;
-        document.getElementById('sum-total').textContent = `$${total.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+        document.getElementById('sum-subtotal').textContent  = `$${subtotal.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+        document.getElementById('sum-tax').textContent       = `$${tax.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+        document.getElementById('sum-total').textContent     = `$${total.toLocaleString('en-US', {minimumFractionDigits:2})}`;
         setCashDueDate();
     }
 
     function setCashDueDate() {
-        const due = new Date();
+        const due  = new Date();
         due.setDate(due.getDate() + 3);
-        const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+        const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('cash-due-date').textContent = due.toLocaleDateString('en-US', opts);
     }
 
-    populateSummary(flight);
+    async function initPage() {
+        if (!selected || !selected.flightId) {
+            showToast('⚠️ No flight selected. Please go back and choose a flight.');
+            return;
+        }
+        try {
+            const res = await fetch(`/api/flights/${selected.flightId}`);
+            if (!res.ok) throw new Error();
+            flightData = await res.json();
+            flightData.passengers = parseInt(selected.passengers) || 1;
+            populateSummary(flightData);
+        } catch {
+            showToast('⚠️ Could not load flight details. Please go back and select a flight.');
+        }
+    }
+
+    initPage();
 
     function switchMethod(method) {
         document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
@@ -370,49 +391,76 @@
             return;
         }
 
+        if (!flightData) {
+            showToast('⚠️ No flight selected. Please go back and select a flight.');
+            return;
+        }
+
         let userInfo = {};
+        const payload = {
+            flight_id:    flightData.id,
+            seats_booked: flightData.passengers,
+            method:       method === 'credit' ? 'credit_card' : 'cash',
+        };
 
         if (method === 'credit') {
-            const num = document.getElementById('cardNumber').value.replace(/\s/g,'');
+            const num  = document.getElementById('cardNumber').value.replace(/\s/g,'');
             const name = document.getElementById('cardName').value.trim();
-            const exp = document.getElementById('expiry').value.trim();
-            const cvv = document.getElementById('cvv').value.trim();
+            const exp  = document.getElementById('expiry').value.trim();
+            const cvv  = document.getElementById('cvv').value.trim();
             if (!num || num.length < 16) { showToast('⚠️ Please enter a valid 16-digit card number.'); return; }
             if (!name) { showToast('⚠️ Please enter the cardholder name.'); return; }
             if (!exp || exp.length < 5) { showToast('⚠️ Please enter a valid expiry date.'); return; }
             if (!cvv || cvv.length < 3) { showToast('⚠️ Please enter a valid CVV.'); return; }
+            // Only send last 4 digits — never transmit the full card number
+            payload.card_last_four  = num.slice(-4);
+            payload.cardholder_name = name;
             userInfo = { name, contact: '**** **** **** ' + num.slice(-4), method: 'Credit Card' };
         }
 
         if (method === 'cash') {
+            const due = new Date();
+            due.setDate(due.getDate() + 3);
+            payload.cash_due_date = due.toISOString().split('T')[0];
             userInfo = { name: 'Walk-in Passenger', contact: 'Cash at Center', method: 'Cash' };
         }
 
-        if (flight) {
-            showDynamicTicket(userInfo, flight);
-        } else {
-            showToast('⚠️ No flight selected. Please go back and select a flight.');
-        }
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch('{{ route("payment.store") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+            body: JSON.stringify(payload),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showDynamicTicket(userInfo, flightData, data.ref);
+            } else {
+                showToast('⚠️ ' + (data.error || 'Payment failed. Please try again.'));
+            }
+        })
+        .catch(() => showToast('⚠️ Something went wrong. Please try again.'));
     }
 
-    function showDynamicTicket(userInfo, f) {
-        const subtotal = f.price;
-        const tax = +(subtotal * TAX_RATE).toFixed(2);
-        const total = subtotal + tax;
+    function showDynamicTicket(userInfo, f, bookingRef) {
+        const subtotal = f.price * f.passengers;
+        const tax      = +(subtotal * TAX_RATE).toFixed(2);
+        const total    = subtotal + tax;
 
-        document.getElementById('tk-flight-id').textContent = f.id;
-        document.getElementById('tk-class').textContent = f.cabinClass || 'Economy';
-        document.getElementById('tk-from-iata').textContent = f.from.iata;
-        document.getElementById('tk-from-city').textContent = f.from.city;
-        document.getElementById('tk-from-time').textContent = f.from.time;
-        document.getElementById('tk-from-date').textContent = f.from.date;
-        document.getElementById('tk-to-iata').textContent = f.to.iata;
-        document.getElementById('tk-to-city').textContent = f.to.city;
-        document.getElementById('tk-to-time').textContent = f.to.time;
-        document.getElementById('tk-to-date').textContent = f.to.date;
-        document.getElementById('tk-return').textContent = f.returnDate || 'One Way';
+        document.getElementById('tk-flight-id').textContent  = f.flight_number;
+        document.getElementById('tk-class').textContent      = 'Economy';
+        document.getElementById('tk-from-iata').textContent  = f.origin;
+        document.getElementById('tk-from-city').textContent  = f.origin;
+        document.getElementById('tk-from-time').textContent  = new Date(f.departure_time).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+        document.getElementById('tk-from-date').textContent  = fmtDate(f.departure_time);
+        document.getElementById('tk-to-iata').textContent    = f.destination;
+        document.getElementById('tk-to-city').textContent    = f.destination;
+        document.getElementById('tk-to-time').textContent    = new Date(f.arrival_time).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+        document.getElementById('tk-to-date').textContent    = fmtDate(f.arrival_time);
+        document.getElementById('tk-return').textContent     = 'One Way';
         document.getElementById('tk-passengers').textContent = f.passengers;
-        document.getElementById('tk-price').textContent = '$' + total.toLocaleString('en-US', {minimumFractionDigits:2});
+        document.getElementById('tk-price').textContent      = '$' + total.toLocaleString('en-US', {minimumFractionDigits:2});
 
         const perEl = document.getElementById('tk-per-person');
         if (f.passengers > 1) {
@@ -426,7 +474,7 @@
         document.getElementById('tk-pax-contact-label').textContent = userInfo.method === 'Credit Card' ? 'Card (last 4)' : 'Contact';
         document.getElementById('tk-pay-method').textContent = userInfo.method;
 
-        const ref = f.id + '-' + Math.random().toString(36).substring(2,7).toUpperCase();
+        const ref = bookingRef || (f.id + '-' + Math.random().toString(36).substring(2,7).toUpperCase());
         document.getElementById('tk-ref').textContent = ref;
 
         const barcode = document.getElementById('tk-barcode');

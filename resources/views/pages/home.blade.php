@@ -97,7 +97,7 @@
                     <h3>Hotel Deal</h3>
                     <p>Book a luxurious stay at our partner hotels</p>
                     <span class="hx-date">Valid until June 15, 2026</span>
-                    <button class="hx-btn" onclick="nn()">Book Now</button>
+                    <button class="hx-btn" onclick="window.location.href=window.Routes.bookhotel">Book Now</button>
                 </div>
             </div>
             <div class="hx-card">
@@ -176,7 +176,7 @@
 <div class="cont">
     <section class="about">
         <div class="about-image">
-            <img src="{{ asset('images/image1.jpg') }}" />
+            <img src="{{ asset('images/image1.jpg') }}" alt="About SkyWings" />
         </div>
         <div class="about-content">
             <p>Our mission is to provide safe, comfortable, and reliable air travel to destinations around the world.</p>

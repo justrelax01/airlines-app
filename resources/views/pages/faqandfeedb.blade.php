@@ -65,7 +65,7 @@
     <section class="nav-bar">
       <div class="nav-container">
         <div class="brand">
-          <a href="{{ route('home') }}"><img src="" /><img /></a>
+          <a href="{{ route('home') }}" style="font-weight:700;font-size:1.2rem;color:#2563eb;text-decoration:none;">SkyWings</a>
         </div>
         <nav>
           <div class="nav-mobile">
@@ -297,24 +297,37 @@ const faqs = [
     document.getElementById('submit-btn').addEventListener('click', () => {
       const name    = document.getElementById('fb-name').value.trim();
       const email   = document.getElementById('fb-email').value.trim();
+      const subject = document.getElementById('fb-topic').value.trim();
       const message = document.getElementById('fb-message').value.trim();
 
-      
       if (!name || !email || !message) {
         alert('Please fill in your name, email, and message before sending.');
         return;
       }
 
-      
-      document.getElementById('success-msg').classList.add('show');
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-      
-      document.getElementById('fb-name').value    = '';
-      document.getElementById('fb-email').value   = '';
-      document.getElementById('fb-topic').value   = '';
-      document.getElementById('fb-message').value = '';
-      stars.forEach(s => { s.classList.remove('active'); s.style.color = ''; });
-      selectedRating = 0;
+      fetch('{{ route("feedback.store") }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken,
+        },
+        body: JSON.stringify({ name, email, subject: subject || 'General', message }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('success-msg').classList.add('show');
+          document.getElementById('fb-name').value    = '';
+          document.getElementById('fb-email').value   = '';
+          document.getElementById('fb-topic').value   = '';
+          document.getElementById('fb-message').value = '';
+          stars.forEach(s => { s.classList.remove('active'); s.style.color = ''; });
+          selectedRating = 0;
+        }
+      })
+      .catch(() => alert('Something went wrong. Please try again.'));
     });
 
 </script>

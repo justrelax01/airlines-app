@@ -57,7 +57,7 @@
     <section class="nav-bar">
       <div class="nav-container">
         <div class="brand">
-          <a href="{{ route('home') }}"><img src="" /><img /></a>
+          <a href="{{ route('home') }}" style="font-weight:700;font-size:1.2rem;color:#2563eb;text-decoration:none;">SkyWings</a>
         </div>
         <nav>
           <div class="nav-mobile">
@@ -103,238 +103,119 @@
 
 
 @section('scripts')
-  
 <script>
-    
-document.getElementById('par_tickets_available').innerHTML=`
-        <h1>Available Flights</h1>
-        <p>Here are the flights available for your travel needs.</p>
-      `;
+    const planeSVG = `<svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>`;
+    const peopleSVG = `<svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>`;
 
-     
-      const flights = [
-        
-      {
-          id:         "AA1425",
-          cabinClass: "Economy",
-          from: { iata: "NYC", city: "new york",  time: "07:30", date: "May 15, 2026" },
-          to:   { iata: "LON", city: "london",    time: "19:45", date: "May 15, 2026" },
-          returnDate: "May 22, 2026",
-          passengers: 1,
-          gate:       "F18",
-          price:      850,
-          specialOffer:null
-        },
-        {
-          id:         "BA2890",
-          cabinClass: "Business",
-          from: { iata: "LAX", city: "Los Angeles", time: "14:20", date: "May 18, 2026" },
-          to:   { iata: "TYO", city: "Tokyo",       time: "18:30", date: "May 19, 2026" },
-          returnDate: "May 28, 2026",
-          passengers: 1,
-          gate:       "B12",
-          price:      2400,
-          specialOffer: null
-        },
+    function fmtTime(dt) {
+        return new Date(dt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+    function fmtDate(dt) {
+        return new Date(dt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
 
-        {
-          id:"DL5673",
-          cabinClass:"Economy",
-          from:{iata:"MIA", city:"miami", time:"9:15",date :"June 02,2026"},
-          to:{iata:"PAR",city:"paris",time:"23:40",date:"June 02,2026"},
-          returnDate:"June 10,2026",
-          passengers: 2,
-          gate:"A24",
-          price:1200,
-          specialOffer:"Special Offer"
-        },
-
-        {
-          id:"BP4321",
-          cabinClass:"First",
-          from:{iata:"Bei",city:"beirut",time:"12:00",date:"july 05,2026"},
-          to:{iata:"Par",city:"paris",time:"16:30",date:"july 05,2026"},
-          returnDate:"july 15,2026",
-          passengers: 1,
-          gate:"C3",
-          price:1000,
-          specialOffer:null
-        },
-      ];
-      
-      
-      document.getElementById('showing_nb_available').innerHTML=`
-        <p>Showing ${flights.length} available flights.</p>
-      `;
-
-       const icons = {
-        plane: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/>
-                </svg>`,
-        calendar: `<svg viewBox="0 0 24 24">
-                     <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
-                   </svg>`,
-        people: `<svg viewBox="0 0 24 24">
-                   <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                 </svg>`,
-        gate: `<svg viewBox="0 0 24 24">
-                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-               </svg>`
-      };
-
-    function createTicketHTML(flight) {
-        const badgeClass = flight.cabinClass.toLowerCase();
-        const badgeHTML = flight.specialOffer
-          ? `<div class="special-offer-badge">${flight.specialOffer}</div>`
-          : '';
- 
-        const perPersonHTML = flight.passengers > 1
-          ? `<div class="price-per-person">$${(flight.price / flight.passengers).toFixed(2)}/person</div>`
-          : '';
- 
+    function createTicketHTML(flight, passengers) {
+        const total = (flight.price * passengers).toLocaleString('en-US', { minimumFractionDigits: 2 });
+        const perPerson = passengers > 1
+            ? `<div class="price-per-person">$${parseFloat(flight.price).toFixed(2)}/person</div>`
+            : '';
         return `
           <div class="ticket-wrapper">
- 
-            ${badgeHTML}
- 
             <div class="ticket">
               <div class="ticket-left">
- 
                 <div class="ticket-header">
                   <div class="flight-id-group">
-                    <div class="plane-icon-box">${icons.plane}</div>
+                    <div class="plane-icon-box">${planeSVG}</div>
                     <div>
-                      <div class="flight-id-label">Flight ID</div>
-                      <div class="flight-id-number">${flight.id}</div>
+                      <div class="flight-id-label">Flight</div>
+                      <div class="flight-id-number">${flight.flight_number}</div>
                     </div>
                   </div>
-                  <span class="class-badge ${badgeClass}">${flight.cabinClass}</span>
                 </div>
- 
                 <div class="route-row">
                   <div class="airport-from">
-                    <div class="iata-code">${flight.from.iata}</div>
-                    <div class="city-name">${flight.from.city}</div>
-                    <div class="flight-time">${flight.from.time}</div>
-                    <div class="flight-date">${flight.from.date}</div>
+                    <div class="iata-code">${flight.origin}</div>
+                    <div class="flight-time">${fmtTime(flight.departure_time)}</div>
+                    <div class="flight-date">${fmtDate(flight.departure_time)}</div>
                   </div>
                   <div class="connector">
                     <div class="connector-line"></div>
-                    <div class="connector-plane">${icons.plane}</div>
+                    <div class="connector-plane">${planeSVG}</div>
                   </div>
                   <div class="airport-to">
-                    <div class="iata-code">${flight.to.iata}</div>
-                    <div class="city-name">${flight.to.city}</div>
-                    <div class="flight-time">${flight.to.time}</div>
-                    <div class="flight-date">${flight.to.date}</div>
+                    <div class="iata-code">${flight.destination}</div>
+                    <div class="flight-time">${fmtTime(flight.arrival_time)}</div>
+                    <div class="flight-date">${fmtDate(flight.arrival_time)}</div>
                   </div>
                 </div>
- 
                 <div class="meta-row">
                   <div class="meta-item">
-                    ${icons.calendar}
-                    <div>
-                      <div class="meta-label">Return</div>
-                      <div class="meta-value">${flight.returnDate}</div>
-                    </div>
-                  </div>
-                  <div class="meta-item">
-                    ${icons.people}
+                    ${peopleSVG}
                     <div>
                       <div class="meta-label">Passengers</div>
-                      <div class="meta-value">${flight.passengers}</div>
+                      <div class="meta-value">${passengers}</div>
                     </div>
                   </div>
                   <div class="meta-item">
-                    ${icons.gate}
+                    ${peopleSVG}
                     <div>
-                      <div class="meta-label">Gate</div>
-                      <div class="meta-value">${flight.gate}</div>
+                      <div class="meta-label">Seats Left</div>
+                      <div class="meta-value">${flight.available_seats}</div>
                     </div>
                   </div>
                 </div>
- 
               </div>
- 
-              <div class="ticket-divider">
-                <div class="notch"></div>
-                <div class="notch"></div>
-              </div>
- 
+              <div class="ticket-divider"><div class="notch"></div><div class="notch"></div></div>
               <div class="ticket-right">
                 <div class="price-label">Total Price</div>
-                <div class="price-amount">$${flight.price.toLocaleString()}</div>
-                ${perPersonHTML}
-                <button class="addtocart-btn" onclick="buynow(${flights.indexOf(flight)})">Buy now</button>
+                <div class="price-amount">$${total}</div>
+                ${perPerson}
+                <button class="addtocart-btn" onclick="buynow(${flight.id}, ${passengers})">Buy now</button>
               </div>
             </div>
- 
-          </div>
-        `;
-      }
- 
-      const container = document.getElementById('tickets-container');
-      container.innerHTML = flights.map(flight => createTicketHTML(flight)).join('');
- 
+          </div>`;
+    }
 
-document.addEventListener("DOMContentLoaded", function () {
+    async function loadAndRenderFlights() {
+        const raw    = sessionStorage.getItem('flightSearch');
+        const search = raw ? JSON.parse(raw) : {};
+        const passengers = parseInt(search.passengers) || 1;
 
-  const parTickets = document.getElementById('par_tickets_available');
-  if (!parTickets) return; 
+        const params = new URLSearchParams();
+        if (search.from) params.set('from', search.from);
+        if (search.to)   params.set('to',   search.to);
+        if (search.date) params.set('date', search.date);
 
-  const raw = sessionStorage.getItem('flightSearch');
-  const search = raw ? JSON.parse(raw) : null;
-  let filteredFlights = flights; 
+        const parTickets = document.getElementById('par_tickets_available');
+        const container  = document.getElementById('tickets-container');
 
-  if (search) {
-    filteredFlights = flights.filter(flight => {
-  const fromMatch = !search.from ||
-    flight.from.city.toLowerCase().includes(search.from) ||
-    flight.from.iata.toLowerCase().includes(search.from);
+        parTickets.innerHTML = search.to
+            ? `<h1>Flights to ${search.to.charAt(0).toUpperCase() + search.to.slice(1)}</h1><p>Showing available flights.</p>`
+            : `<h1>Available Flights</h1><p>Here are the flights available for your travel needs.</p>`;
 
-  const toMatch = !search.to ||
-    flight.to.city.toLowerCase().includes(search.to) ||
-    flight.to.iata.toLowerCase().includes(search.to);
+        try {
+            const res   = await fetch('/api/flights?' + params.toString());
+            const json  = await res.json();
+            const flights = json.data || [];
 
-  const classMatch = !search.cabinClass ||
-    flight.cabinClass.toLowerCase() === search.cabinClass;
+            document.getElementById('showing_nb_available').innerHTML = flights.length > 0
+                ? `<p>Showing ${flights.length} available flight(s).</p>`
+                : `<p>No flights found. <a href="${window.Routes.searchflights}">Try again</a></p>`;
 
-  const passengersMatch = !search.passengers || 
-    flight.passengers >= search.passengers;
+            container.innerHTML = flights.map(f => createTicketHTML(f, passengers)).join('');
+        } catch {
+            container.innerHTML = `<p>Could not load flights. Please try again later.</p>`;
+        }
 
-  return fromMatch && toMatch && classMatch && passengersMatch;
+        sessionStorage.removeItem('flightSearch');
+    }
 
-    });
+    function buynow(flightId, passengers) {
+        sessionStorage.setItem('selectedFlight', JSON.stringify({ flightId, passengers }));
+        window.location.href = window.Routes.payment;
+    }
 
-    parTickets.innerHTML = `
-      <h1>Flights to ${search.to.charAt(0).toUpperCase() + search.to.slice(1)}</h1>
-      <p>Showing all available flights to this destination.</p>
-    `;
-  } else {
-
-    parTickets.innerHTML = `
-      <h1>Available Flights</h1>
-      <p>Here are the flights available for your travel needs.</p>
-    `;
-  }
-
-  document.getElementById('showing_nb_available').innerHTML =
-    filteredFlights.length > 0
-      ? `<p>Showing ${filteredFlights.length} available flight(s).</p>`
-      : `<p>No flights found. <a href="searchflights.html">Try again</a></p>`;
-
-  const container = document.getElementById('tickets-container');
-  container.innerHTML = filteredFlights.map(flight => createTicketHTML(flight)).join('');
-
-  sessionStorage.removeItem('flightSearch');
-});
-
-
-function buynow(index) {
-  sessionStorage.setItem('selectedFlight', JSON.stringify(flights[index]));
-  window.location.href = "payment.html";
-}
-
+    document.addEventListener('DOMContentLoaded', loadAndRenderFlights);
 </script>
     
     

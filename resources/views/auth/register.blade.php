@@ -16,7 +16,7 @@
     <section class="nav-bar">
         <div class="nav-container">
             <div class="brand">
-                <a href="#"><img src="" alt="Logo" /></a>
+                <a href="{{ route('home') }}" style="font-weight:700;font-size:1.2rem;color:#2563eb;text-decoration:none;">SkyWings</a>
             </div>
             <nav>
                 <div class="nav-mobile">
@@ -88,7 +88,7 @@
                         <div id="errmessages" class="message"></div>
                         
                         <!-- Fixed button hierarchy. Removed empty <a> tag -->
-                        <button onclick="submitreg()" type="submit" class="bttn" ><a href="home.html"></a>Register</button>
+                        <button onclick="submitreg()" type="button" class="bttn">Register</button>
                     </form>
 
                 </div>
