@@ -93,5 +93,99 @@ function submitreg() {
   errorMessages2.innerHTML = "";
   document.querySelector('form').submit();
 }
+
+
+
+/*booking*/
+
+  function makeabooking() {
+  
+    const fullname = document.getElementById("full-name").value;
+    const email = document.getElementById("email").value;
+  
+    const textfrom = document.getElementById("text-from").value;
+    const textto = document.getElementById("text-to").value;
+    const phonenb = document.getElementById("phone").value;
+    const age = document.getElementById("age").value;
+    const returntime = document.getElementById("return-time").value;
+    const returndate = document.getElementById("return-date").value;
+    const errorMessages = document.getElementById("errmessages");
+    const errorMessages1 = document.getElementById("errmessages1");
+    const errorMessages2 = document.getElementById("errmessages2");
+
+  // Validation
+    if (!textfrom || !textto || !email || !age || !phonenb || !fullname || !returntime || !returndate) { 
+    errorMessages.innerHTML = "All fields are required!";
+    return;
+  }
+
+  if (isNaN(age) || age < 3 || age > 95) {
+    errorMessages1.innerHTML = "Age should be a number between 3 and 95.";
+    return;
+  }
+
+  if (phonenb.length !== 8 || isNaN(phonenb)) {
+    errorMessages2.innerHTML = "Check your phone number!";
+    return;
+  }
+
+
+  errorMessages.innerHTML = "";
+  errorMessages1.innerHTML = "";
+  errorMessages2.innerHTML = "";
+
+  // Create a table row with delete button
+  const tableRow = document.createElement("tr");
+  tableRow.innerHTML = `
+      <td>${fullname}</td>
+      <td>${email}</td>
+      <td>${age}</td>
+      <td>${phonenb}</td>
+      <td>${textfrom}</td>
+      <td>${textto}</td>
+      <td>${returndate}</td>
+      <td>${returntime}</td>
+      <td>hotel 1</td>
+      <td><button onclick="deleteBooking(this)">Delete</button></td>
+    `;
+
+  // Append the table row to the table body
+  const bookPostsContainer = document.getElementById("bookPostsContainer");
+  bookPostsContainer.appendChild(tableRow);
+
+  // Show the table and update the count message
+  const bookingsTable = document.getElementById("bookingsTable");
+  bookingsTable.style.display = "table";
+  const bookCountMessage = document.getElementById("bookCountMessage");
+  bookCountMessage.style.display = "block";
+  bookCountMessage.innerText = `Total Bookings: ${bookPostsContainer.children.length}`;
+
+ 
+}
+
+
+//delete the booking in the booking page
+function deleteBooking(button) {
+  const row = button.closest("tr");
+  row.remove();
+  const bookPostsContainer = document.getElementById("bookPostsContainer");
+  const bookCountMessage = document.getElementById("bookCountMessage");
+  bookCountMessage.innerText = `Total Bookings: ${bookPostsContainer.children.length}`;
+}
+
+
+function nn(){
+  window.location.href="bookhotel.html";
+}
+
+
+
+
+
+
+
+
+
+
 /******/ })()
 ;

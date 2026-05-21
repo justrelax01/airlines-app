@@ -52,16 +52,16 @@ class PaymentController extends Controller
             'payment_status'  => $validated['method'] === 'credit_card' ? 'completed' : 'pending',
         ]);
 
+        $ref = 'BK-' . strtoupper(Str::random(8));
+
         if ($validated['method'] === 'credit_card') {
             $booking->update(['status' => 'confirmed']);
             $booking->load('user', 'flight');
-            if ($booking->user?->email) {
+            if ($booking->user && $booking->user->email) {
                 Mail::to($booking->user->email)
                     ->send(new BookingConfirmedMail($booking, $ref));
             }
         }
-
-        $ref = 'BK-' . strtoupper(Str::random(8));
 
         return response()->json([
             'success'    => true,
@@ -69,5 +69,19 @@ class PaymentController extends Controller
             'booking_id' => $booking->id,
             'payment_id' => $payment->id,
         ]);
+
+
+        // 1. Check if the user already has a booking
+    $userId = auth()->id();
+    $alreadyBooked = Booking::where('user_id', $userId)->exists();
+
+    if ($alreadyBooked) {
+        return response()->json([
+            'success' => false,
+            'message' => 'You have already booked a flight! Each user is limited to one flight reservation.'
+        ], 400); // 400 Bad Request
+    }
+
+    // ... your existing validation and booking creation logic continues below ...
     }
 }

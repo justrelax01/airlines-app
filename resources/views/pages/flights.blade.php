@@ -8,8 +8,7 @@
 
 @section('styles')
  
-    <link rel="stylesheet" href="external.css">
-
+<link rel="stylesheet" href="{{ asset('css/external.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <style>
@@ -54,39 +53,7 @@
     <button class="back-btn" onclick="history.back()">← Back</button>
 
     
-    <section class="nav-bar">
-      <div class="nav-container">
-        <div class="brand">
-          <a href="{{ route('home') }}" style="font-weight:700;font-size:1.2rem;color:#2563eb;text-decoration:none;">SkyWings</a>
-        </div>
-        <nav>
-          <div class="nav-mobile">
-            <a id="nav-toggle" href="#!"><span class="material-icons"></span></a>
-          </div>
-          <ul class="nav-list selected">
-            <li>
-              <a href="{{ route('home') }}">Home</a>
-            </li>
-            <li>
-              <a href="{{ route('flights') }}">Flights</a>
-            </li>
-            <li>
-              <a href="{{ route('faq-feedback') }}">FaQ & Feedback</a>
-            </li>
-            <li>
-              <a href="#yyy">About</a>
-            </li>
-            <li>
-              <a href="{{ route('login') }}">Login or Register</a>
-            </li>
-            <li>
-              <a href="{{ route('searchflights') }}"><i class="fa-solid fa-magnifying-glass"></i></a>
-            </li>
-            
-          </ul>
-        </nav>
-      </div>
-    </section>
+   
 
 
     <div id="par_tickets_available"></div>

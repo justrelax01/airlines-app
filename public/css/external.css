@@ -2,7 +2,6 @@
 
 
 
-
 /* Scroll to Top Button */
 #scrollTopBtn {
   position: fixed;
@@ -22,6 +21,7 @@
 #scrollTopBtn:hover {
   background: #0056b3;
 }
+
 
 
 
@@ -948,170 +948,6 @@ ul{
 
 
 
-  /*login page*/
-
-  .background{
-    width: 100%;
-    height: 100vh;
-    background: url('/images/plane2.jpg') no-repeat;
-    background-size: cover;
-    background-position: center;
-    filter: blur(20px);
-  }
-  
-.container{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    width: 75%;
-    height: 550px;
-    background:url('/images/plane2.jpg') no-repeat;
-    background-size: cover;
-    background-position: center;
-    border-radius: 10px;
-    margin-top: 20px;    
-}
-.container .logreg-box {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 60%;        /* was calc(100%-40%) — broken */
-    height: 100%;
-}
-
-.container .content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 40%;
-    height: 100%;      /* was 110% — caused overflow */
-    background: transparent;
-    padding: 40px;
-    color: white;
-    display: flex;
-    flex-direction: column;   /* was missing */
-    justify-content: center;  /* was space-between */
-}
-
-.logreg-box .form-box{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 110%;
-    height:70%;
-    background: transparent;
-    backdrop-filter: blur(8px);
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    color: white;
-
-}
-
-.form-box h2{
-    font-size: 40px;
-    text-align: center;
-
-}
-
-.form-box .input-box{
-    position: relative;
-    width: 350px;
-    height: 40px;
-    border-bottom: 2px solid #e4e4e4;
-    margin: 30px 0;
-}
-
-.input-box input{
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    color: black;
-    font-weight: 500;
-    padding-right: 28px;
-}
-
-.input-box label{
-    position: absolute;
-    top: 50%;
-    left: 5%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    font-weight: 500;
-    pointer-events: none;
-    transition: .5s ease;
-}
-
-.input-box input:focus~label,
-.input-box input:valid~label{
-    top: -5px;
-
-}
-
-
-.form-box .remember-forgot{
-    font-size: 14.5px;
-    font-weight:500;
-    margin: -15px 0 15px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.remember-forgot label input{
-    accent-color: white;
-    margin-right: 3px;
-}
-
-.remember-forgot a{
-    color: white;
-    text-decoration: none;
-}
-
-.remember-forgot a:hover{
-    text-decoration: underline;
-}
-
-.message {
-   color: red;
-   margin-bottom: 8px;
-   margin-top: -8px;
- 
-}
-
-.bttn{
-    width: 100%;
-    height: 45px;
-    background: #c4103d;
-    border: none;
-    outline: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    color: #e4e4e4;
-    font-weight: 500;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
-}
-
-.form-box .log-register{
-    font-size: 14.5px;
-    font-weight: 500;
-    text-align: center;
-    margin-top: 25px;
-}
-
-.login-register p a{
-    color: white;
-    font-weight: 600;
-    text-decoration: none; 
-}
-
-.login-register p a:hover{
-    text-decoration: underline;
-
-}
 
 
 
@@ -1120,49 +956,369 @@ ul{
 
 
 
-/*register*/
 
-.backgroundd{
+
+/* ============================================================
+   LOGIN page  (lr- prefix)
+   ============================================================ */
+
+.lr-background {
   width: 100%;
   height: 100vh;
-  background: url('/images/russia.jpg') no-repeat;
+  background: url('/images/plane2.jpg') no-repeat center center;
   background-size: cover;
-  background-position: center;
   filter: blur(20px);
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 0;
 }
 
-.containerr{
-  position: absolute;
-  top: 50%;
+.lr-container {
+  position: fixed;
+  top: 53%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   width: 75%;
-  height: 525px;
-  background:url('/images/russia.jpg') no-repeat;
+  height: 550px;
+  background: url('/images/plane2.jpg') no-repeat center center;
   background-size: cover;
-  background-position: center;
   border-radius: 10px;
-  margin-top: 10px;    
+  z-index: 1;
+  display: flex;
 }
 
-.containerr .content{
-  position:absolute;
-  width: 65%;
-  height: 130%;
-  background: transparent;
-  padding: 100px;
+.lr-content {
+  width: 55%;
+  height: 100%;
+  padding: 80px 60px;
   color: white;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.containerr .logreg-box{
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 40%;
-  height: 87%;
+.lr-content h1 {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 14px;
+  color: white;
 }
+
+.lr-content h1 span { display: block; }
+
+.lr-content p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.85);
+}
+
+.lr-logreg-box {
+  width: 45%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lr-form-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding: 30px 20px;
+  color: white;
+}
+
+.lr-form-box h2 {
+  font-size: 38px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.lr-input-box {
+  position: relative;
+  width: 320px;
+  height: 40px;
+  border-bottom: 2px solid #e4e4e4;
+  margin: 24px 0;
+}
+
+.lr-input-box input {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: white;
+  font-weight: 500;
+  padding-right: 28px;
+}
+
+.lr-input-box label {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  pointer-events: none;
+  transition: 0.4s ease;
+}
+
+.lr-input-box input:focus ~ label,
+.lr-input-box input:valid  ~ label {
+  top: -6px;
+  font-size: 12px;
+  color: white;
+}
+
+.lr-remember-forgot {
+  width: 320px;
+  font-size: 14px;
+  font-weight: 500;
+  margin: -10px 0 14px;
+  display: flex;
+  justify-content: space-between;
+  color: white;
+}
+
+.lr-remember-forgot label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.lr-remember-forgot label input { accent-color: white; }
+
+.lr-remember-forgot a { color: white; text-decoration: none; }
+.lr-remember-forgot a:hover { text-decoration: underline; }
+
+.lr-message {
+  color: #ff6b6b;
+  font-size: 12px;
+  width: 320px;
+  margin-bottom: 4px;
+  min-height: 16px;
+}
+
+.lr-bttn {
+  width: 320px;
+  height: 45px;
+  background: #c4103d;
+  border: none;
+  outline: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #e4e4e4;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  transition: background 0.2s ease;
+  margin-top: 6px;
+}
+
+.lr-bttn:hover { background: #a00d33; }
+
+.lr-login-register {
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+}
+
+.lr-login-register p a { color: white; font-weight: 700; text-decoration: none; }
+.lr-login-register p a:hover { text-decoration: underline; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================================
+   REGISTER page  (reg- prefix — completely separate from lr-)
+   ============================================================ */
+
+.reg-background {
+  width: 100%;
+  height: 100vh;
+  background: url('/images/russia.jpg') no-repeat ;
+  background-size: cover;
+  filter: blur(20px);
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 0;
+}
+
+.reg-container {
+  position: fixed;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  /* taller than login to fit 5 fields */
+  height: 580px;
+  background: url('/images/russia.jpg') no-repeat ;
+  background-size: cover;
+  border-radius: 10px;
+  z-index: 1;
+  display: flex;
+}
+
+.reg-content {
+  width: 55%;
+  height: 100%;
+  padding: 80px 60px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.reg-content h1 {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 14px;
+  color: white;
+}
+
+.reg-content h1 span { display: block; }
+
+.reg-content p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.85);
+}
+
+.reg-logreg-box {
+  width: 45%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reg-form-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  /* tighter vertical padding so all fields fit */
+  padding: 20px 20px;
+  color: white;
+  overflow: hidden;
+}
+
+.reg-form-box h2 {
+  font-size: 34px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 6px;
+  color: white;
+}
+
+.reg-input-box {
+  position: relative;
+  width: 320px;
+  height: 36px;
+  border-bottom: 2px solid #e4e4e4;
+  /* tighter margin so all 5 fields fit */
+  margin: 16px 0;
+}
+
+.reg-input-box input {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: white;
+  font-weight: 500;
+  padding-right: 28px;
+}
+
+.reg-input-box label {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  pointer-events: none;
+  transition: 0.4s ease;
+}
+
+.reg-input-box input:focus ~ label,
+.reg-input-box input:valid  ~ label {
+  top: -6px;
+  font-size: 12px;
+  color: white;
+}
+
+.reg-message {
+  color: #ff6b6b;
+  font-size: 11px;
+  width: 320px;
+  margin-bottom: 2px;
+  min-height: 14px;
+  line-height: 1.3;
+}
+
+.reg-bttn {
+  width: 320px;
+  height: 45px;
+  background: #c4103d;
+  border: none;
+  outline: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #e4e4e4;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  transition: background 0.2s ease;
+  margin-top: 8px;
+}
+
+.reg-bttn:hover { background: #a00d33; }
+
+.reg-login-register {
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+}
+
+.reg-login-register p a { color: white; font-weight: 700; text-decoration: none; }
+.reg-login-register p a:hover { text-decoration: underline; }
 
 
 
@@ -1333,7 +1489,7 @@ ul{
         width: 100%;
         min-height: 520px;
         height: 620px;
-        background-image: url(images/sky_airplane.jpg);
+        background-image: url("/images/sky_airplane.jpg");
         background-size: cover;
         background-position: center;
         position: relative;
@@ -3061,6 +3217,8 @@ ul{
       .summary-card { position: static; }
       h1.page-title { font-size: 1.5rem; }
     }
+
+
 
 
 

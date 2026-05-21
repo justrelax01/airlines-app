@@ -17,8 +17,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
     <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/external.css">
-    <script src="/js/app.js" defer></script>
-    <script src="/js/js.js" defer></script>
+    <script src="/js/app.js" ></script>
+    <script src="/js/js.js" ></script>
     @yield('styles')
 </head>
 <body>

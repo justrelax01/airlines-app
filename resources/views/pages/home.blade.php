@@ -3,6 +3,7 @@
 @section('title', 'Home - Airlines')
 
 @section('styles')
+<link rel="stylesheet" href="{{ asset('css/external.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
     .class1 { width: 100%; height: 100%; margin: auto; }

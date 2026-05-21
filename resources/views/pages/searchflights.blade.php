@@ -3,6 +3,7 @@
 @section('title', 'Search Flights')
 
 @section('styles')
+<link rel="stylesheet" href="{{ asset('css/external.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 @endsection
 
@@ -385,5 +386,5 @@
 @endsection
 
 @section('scripts')
-<script src="/js/js.js"></script>
+<script src="{{ asset('js/js.js') }}"></script>
 @endsection

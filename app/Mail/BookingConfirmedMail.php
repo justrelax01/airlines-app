@@ -11,10 +11,16 @@ class BookingConfirmedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(
-        public Booking $booking,
-        public string $ref
-    ) {}
+    // 1. Declare the properties explicitly up here
+    public $booking;
+    public $ref;
+
+    // 2. Assign them normally in the constructor
+    public function __construct(Booking $booking, string $ref)
+    {
+        $this->booking = $booking;
+        $this->ref = $ref;
+    }
 
     public function build(): self
     {
