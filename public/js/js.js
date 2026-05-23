@@ -3,35 +3,34 @@ var __webpack_exports__ = {};
 /*!****************************!*\
   !*** ./resources/js/js.js ***!
   \****************************/
+
+
+
 /* Search flights — redirect uses server-provided route URLs */
 document.addEventListener("DOMContentLoaded", function () {
-  var searchForm = document.querySelector('.bk_search_form form');
-  if (searchForm) {
-    searchForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var searchData = {
-        from: document.getElementById('departure').value.trim().toLowerCase(),
-        to: document.getElementById('arrival').value.trim().toLowerCase(),
-        date: document.getElementById('departure-date').value,
-        returnDate: document.getElementById('return-date').value,
-        passengers: parseInt(document.getElementById('passengers').value),
-        cabinClass: document.getElementById('class').value
-      };
-      sessionStorage.setItem('flightSearch', JSON.stringify(searchData));
-      window.location.href = window.Routes && window.Routes.flights || '/flights';
-    });
-  }
-});
-function viewDestinationFlights(destination) {
-  sessionStorage.setItem('flightSearch', JSON.stringify({
-    from: '',
-    to: destination.toLowerCase(),
-    passengers: 1,
-    cabinClass: ''
-  }));
-  window.location.href = window.Routes && window.Routes.flights || '/flights';
-}
+    var searchForm = document.querySelector('.bk_search_form form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function (e) {
+            e.preventDefault();
 
+            var from       = document.getElementById('departure').value.trim();
+            var to         = document.getElementById('arrival').value.trim();
+            var date       = document.getElementById('departure-date').value;
+            var returnDate = document.getElementById('return-date').value;
+            var passengers = document.getElementById('passengers').value;
+            var cabinClass = document.getElementById('class').value;
+
+            window.location.href = '/flights?from=' + from +'&to=' + to +'&date=' + date +                             
+            '&returnDate=' + returnDate +
+            '&passengers=' + passengers +                    
+            '&cabinClass=' + cabinClass;
+        });
+    }
+});
+
+function viewDestinationFlights(destination) {
+    window.location.href = '/flights?to=' + destination + '&passengers=1';
+}
 /* Scroll-to-top button */
 var btn = document.getElementById("scrollTopBtn");
 if (btn) {

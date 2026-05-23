@@ -99,24 +99,29 @@
       </div>
 
       <div class="feedback-card">
+       <form method="POST" action="{{ route('feedback.store') }}" id="feedbackForm">
+        @csrf
+
+          <input type="hidden" name="subject" id="hidden-subject" value="General" />
+          <input type="hidden" name="rating"  id="hidden-rating"  value="0" />
         <div class="faq-form-grid">
 
           
           <div class="faq-form-group">
-            <label class="faq-form-label" for="fb-name">Full Name</label>
-            <input class="faq-form-input" id="fb-name" type="text" placeholder="e.g. John Smith" />
+            <label class="faq-form-label"  for="fb-name">Full Name</label>
+            <input class="faq-form-input" name="name" id="fb-name" type="text" placeholder="e.g. John Smith" />
           </div>
 
          
           <div class="faq-form-group">
             <label class="faq-form-label" for="fb-email">Email Address</label>
-            <input class="faq-form-input" id="fb-email" type="email" placeholder="you@example.com" />
+            <input class="faq-form-input" name="email" id="fb-email" type="email" placeholder="you@example.com" />
           </div>
 
           <!-- Topic -->
           <div class="faq-form-group">
             <label class="faq-form-label" for="fb-topic">Topic</label>
-            <select class="faq-form-select" id="fb-topic">
+            <select class="faq-form-select" name="topic" id="fb-topic">
               <option value="" disabled selected>Select a topic</option>
               <option>Flight Experience</option>
               <option>Booking Process</option>
@@ -141,24 +146,29 @@
           <!-- Message -->
           <div class="faq-form-group full">
             <label class="faq-form-label" for="fb-message">Your Message</label>
-            <textarea class="faq-form-textarea" id="fb-message" placeholder="Tell us about your experience, or ask a question. We'll reply within 48 hours…"></textarea>
+            <textarea class="faq-form-textarea" name="message" id="fb-message" placeholder="Tell us about your experience, or ask a question. We'll reply within 48 hours…"></textarea>
           </div>
 
         </div>
 
+
+      
         <div class="submit-row">
           <p class="submit-note">🔒 Your information is private and never shared.</p>
-          <button class="feedback-btn" id="submit-btn">
-            Send Feedback
+          <button class="feedback-btn" id="submit-btn">Send Feedback
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </button>
         </div>
 
+        </form>
         
-        <div class="success-msg" id="success-msg">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-          Thank you! Your feedback has been sent. We'll get back to you within 48 hours.
-        </div>
+        @if(session('feedback_success'))
+    <div class="success-msg show" id="success-msg">
+@else
+    <div class="success-msg" id="success-msg">
+@endif
+    <svg viewBox="0 0 24 24">...</svg>
+    Thank you! Your feedback has been sent
       </div>
     </section>
 
@@ -262,42 +272,24 @@ const faqs = [
     });
 
 
-    document.getElementById('submit-btn').addEventListener('click', () => {
-      const name    = document.getElementById('fb-name').value.trim();
-      const email   = document.getElementById('fb-email').value.trim();
-      const subject = document.getElementById('fb-topic').value.trim();
-      const message = document.getElementById('fb-message').value.trim();
+   document.getElementById('submit-btn').addEventListener('click', function () {
+    const name    = document.getElementById('fb-name').value.trim();
+    const email   = document.getElementById('fb-email').value.trim();
+    const topic   = document.getElementById('fb-topic').value.trim();
+    const message = document.getElementById('fb-message').value.trim();
 
-      if (!name || !email || !message) {
+    if (!name || !email || !message) {
         alert('Please fill in your name, email, and message before sending.');
         return;
-      }
+    }
 
-      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    document.getElementById('hidden-subject').value = topic || 'General';
+    document.getElementById('hidden-rating').value  = selectedRating;
 
-      fetch('{{ route("feedback.store") }}', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': csrfToken,
-        },
-        body: JSON.stringify({ name, email, subject: subject || 'General', message }),
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          document.getElementById('success-msg').classList.add('show');
-          document.getElementById('fb-name').value    = '';
-          document.getElementById('fb-email').value   = '';
-          document.getElementById('fb-topic').value   = '';
-          document.getElementById('fb-message').value = '';
-          stars.forEach(s => { s.classList.remove('active'); s.style.color = ''; });
-          selectedRating = 0;
-        }
-      })
-      .catch(() => alert('Something went wrong. Please try again.'));
-    });
-
+    document.getElementById('feedbackForm').submit();
+});
 </script>
+
+<script src="js/js.js"></script>
 
 @endsection

@@ -18,11 +18,13 @@ function submitreg() {
   var errorMessages = document.getElementById("errmessages");
   var errorMessages1 = document.getElementById("errmessages1");
   var errorMessages2 = document.getElementById("errmessages2");
+  
   if (!email || !pass || !fname || !lname || !passconfirm) {
     errorMessages.innerHTML = "All fields are required";
     return;
   }
   var passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,30}$/;
+  
   if (!pass.match(passRegex)) {
     errorMessages2.innerHTML = "Password must be 8–30 characters and contain at least one uppercase letter, one lowercase letter, one digit, and one special character (!@#$%^&*()_+)";
     return;

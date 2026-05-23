@@ -20,6 +20,6 @@ class FeedbackController extends Controller
 
         Feedback::create($validated);
 
-        return response()->json(['success' => true]);
+         return redirect()->back()->with('feedback_success', true);
     }
 }

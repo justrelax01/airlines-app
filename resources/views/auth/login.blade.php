@@ -92,8 +92,18 @@ function submitlogin() {
     var pass = document.getElementById("pass").value;
     var errorMessages = document.getElementById("errmessages");
     var errorMessages1 = document.getElementById("errmessages1");
-    if (!email || !pass) { errorMessages.innerHTML = "All fields are required"; return; }
-    if (!email.includes("@")) { errorMessages1.innerHTML = "Email should contain @"; return; }
+    
+    if (!email || !pass) { 
+      errorMessages.innerHTML = "All fields are required"; 
+      return; 
+    }
+
+    if (!email.includes("@")) { 
+      errorMessages1.innerHTML = "Email should contain @"; 
+      return; 
+    
+    }
+    
     errorMessages.innerHTML = "";
     errorMessages1.innerHTML = "";
     document.querySelector('form').submit();

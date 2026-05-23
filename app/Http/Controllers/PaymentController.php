@@ -12,8 +12,33 @@ use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
+  public function index(Request $request)
+{
+    $booking = Booking::where('user_id', auth()->id())
+                      ->whereIn('status', ['pending', 'confirmed'])
+                      ->with('flight')
+                      ->first();
+
+    $flight     = $request->has('flightId') ? \App\Models\Flight::find($request->flightId) : null;
+    $passengers = $request->get('passengers', 1);
+
+    return view('pages.payment', compact('booking', 'flight', 'passengers'));
+}
+
     public function store(Request $request)
     {
+        
+        $alreadyBooked = Booking::where('user_id', auth()->id())
+                                ->whereIn('status', ['pending', 'confirmed'])
+                                ->exists();
+
+        if ($alreadyBooked) {
+            return redirect()->back()->withErrors([
+                'booking' => 'You already have an active booking. Each user is limited to one reservation.'
+            ]);
+        }
+
+        
         $validated = $request->validate([
             'flight_id'       => 'required|exists:flights,id',
             'seats_booked'    => 'required|integer|min:1',
@@ -23,12 +48,16 @@ class PaymentController extends Controller
             'cash_due_date'   => 'nullable|date|required_if:method,cash',
         ]);
 
+       
         $flight = Flight::findOrFail($validated['flight_id']);
 
         if ($flight->available_seats < $validated['seats_booked']) {
-            return response()->json(['error' => 'Not enough available seats.'], 422);
+            return redirect()->back()->withErrors([
+                'booking' => 'Not enough available seats.'
+            ]);
         }
 
+        // 4. Create booking 
         $subtotal = $flight->price * $validated['seats_booked'];
         $total    = round($subtotal * 1.15, 2);
 
@@ -42,6 +71,7 @@ class PaymentController extends Controller
 
         $flight->decrement('available_seats', $validated['seats_booked']);
 
+        //  5. Create payment 
         $payment = Payment::create([
             'booking_id'      => $booking->id,
             'method'          => $validated['method'],
@@ -52,6 +82,7 @@ class PaymentController extends Controller
             'payment_status'  => $validated['method'] === 'credit_card' ? 'completed' : 'pending',
         ]);
 
+        //  6. Confirm and send email if credit card 
         $ref = 'BK-' . strtoupper(Str::random(8));
 
         if ($validated['method'] === 'credit_card') {
@@ -63,25 +94,21 @@ class PaymentController extends Controller
             }
         }
 
-        return response()->json([
-            'success'    => true,
-            'ref'        => $ref,
-            'booking_id' => $booking->id,
-            'payment_id' => $payment->id,
-        ]);
-
-
-        // 1. Check if the user already has a booking
-    $userId = auth()->id();
-    $alreadyBooked = Booking::where('user_id', $userId)->exists();
-
-    if ($alreadyBooked) {
-        return response()->json([
-            'success' => false,
-            'message' => 'You have already booked a flight! Each user is limited to one flight reservation.'
-        ], 400); // 400 Bad Request
+        //  7. Redirect back to payment page with booking 
+        return redirect()->route('payment.index');
     }
 
-    // ... your existing validation and booking creation logic continues below ...
+   public function destroy($id)
+{
+    $booking = Booking::findOrFail($id);
+
+    if ($booking->user_id !== auth()->id()) {
+        abort(403);
     }
+
+    $booking->flight->increment('available_seats', $booking->seats_booked);
+    $booking->delete();
+
+    return redirect()->route('payment.index');
+}
 }

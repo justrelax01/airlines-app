@@ -8,7 +8,7 @@
         window.Routes = {
             home:        '{{ route("home") }}',
             flights:     '{{ route("flights") }}',
-            payment:     '{{ route("payment") }}',
+            payment:     '{{ route("payment.index") }}',
             bookhotel:   '{{ route("bookhotel") }}',
             searchflights: '{{ route("searchflights") }}',
         };

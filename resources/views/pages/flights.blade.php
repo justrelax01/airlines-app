@@ -143,46 +143,47 @@
           </div>`;
     }
 
-    async function loadAndRenderFlights() {
-        const raw    = sessionStorage.getItem('flightSearch');
-        const search = raw ? JSON.parse(raw) : {};
-        const passengers = parseInt(search.passengers) || 1;
+   async function loadAndRenderFlights() {
+    const params     = new URLSearchParams(window.location.search);
+    const from       = params.get('from') || '';
+    const to         = params.get('to')   || '';
+    const date       = params.get('date') || '';
+    const passengers = parseInt(params.get('passengers')) || 1;
 
-        const params = new URLSearchParams();
-        if (search.from) params.set('from', search.from);
-        if (search.to)   params.set('to',   search.to);
-        if (search.date) params.set('date', search.date);
+    const apiParams = new URLSearchParams();
+    if (from) apiParams.set('from', from);
+    if (to)   apiParams.set('to',   to);
+    if (date) apiParams.set('date', date);
 
-        const parTickets = document.getElementById('par_tickets_available');
-        const container  = document.getElementById('tickets-container');
+    const parTickets = document.getElementById('par_tickets_available');
+    const container  = document.getElementById('tickets-container');
 
-        parTickets.innerHTML = search.to
-            ? `<h1>Flights to ${search.to.charAt(0).toUpperCase() + search.to.slice(1)}</h1><p>Showing available flights.</p>`
-            : `<h1>Available Flights</h1><p>Here are the flights available for your travel needs.</p>`;
+    parTickets.innerHTML = to
+        ? `<h1>Flights to ${to.charAt(0).toUpperCase() + to.slice(1)}</h1><p>Showing available flights.</p>`
+        : `<h1>Available Flights</h1><p>Here are the flights available for your travel needs.</p>`;
 
-        try {
-            const res   = await fetch('/api/flights?' + params.toString());
-            const json  = await res.json();
-            const flights = json.data || [];
+    try {
+        const res     = await fetch('/api/flights?' + apiParams.toString());
+        const json    = await res.json();
+        const flights = json.data || [];
 
-            document.getElementById('showing_nb_available').innerHTML = flights.length > 0
-                ? `<p>Showing ${flights.length} available flight(s).</p>`
-                : `<p>No flights found. <a href="${window.Routes.searchflights}">Try again</a></p>`;
+        document.getElementById('showing_nb_available').innerHTML = flights.length > 0
+            ? `<p>Showing ${flights.length} available flight(s).</p>`
+            : `<p>No flights found. <a href="${window.Routes.searchflights}">Try again</a></p>`;
 
-            container.innerHTML = flights.map(f => createTicketHTML(f, passengers)).join('');
-        } catch {
-            container.innerHTML = `<p>Could not load flights. Please try again later.</p>`;
-        }
-
-        sessionStorage.removeItem('flightSearch');
+        container.innerHTML = flights.map(f => createTicketHTML(f, passengers)).join('');
+    } catch {
+        container.innerHTML = `<p>Could not load flights. Please try again later.</p>`;
     }
+}
 
-    function buynow(flightId, passengers) {
-        sessionStorage.setItem('selectedFlight', JSON.stringify({ flightId, passengers }));
-        window.location.href = window.Routes.payment;
-    }
+function buynow(flightId, passengers) {
+    window.location.href = window.Routes.payment +
+                           '?flightId='    + flightId +
+                           '&passengers='  + passengers;
+}
 
-    document.addEventListener('DOMContentLoaded', loadAndRenderFlights);
+document.addEventListener('DOMContentLoaded', loadAndRenderFlights);
 </script>
     
     

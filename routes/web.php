@@ -12,7 +12,6 @@ Route::get('/', fn() => view('pages.home'))->name('home');
 Route::get('/flights', fn() => view('pages.flights'))->name('flights');
 Route::get('/search-flights', fn() => view('pages.searchflights'))->name('searchflights');
 Route::get('/bookhotel', fn() => view('pages.bookhotel'))->name('bookhotel');
-Route::get('/payment', fn() => view('pages.payment'))->name('payment');
 Route::get('/faq', fn() => view('pages.faqandfeedb'))->name('faq-feedback');
 
 // Auth routes
@@ -25,10 +24,18 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Form submission routes (accessible to guests and authenticated users)
 Route::post('/bookhotel', [HotelBookingController::class, 'store'])->name('hotel.book');
 Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
-Route::post('/payment', [PaymentController::class, 'store'])->middleware('auth')->name('payment.store');
 
 // Protected pages
 Route::middleware(['auth'])->group(function () {
+
+    // Payment page — now served by the controller so it can pass the booking to the view
+    Route::get('/payment',  [PaymentController::class, 'index'])->name('payment.index');
+    Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
+
+    // Cancel a booking
+    Route::delete('/bookings/{id}', [PaymentController::class, 'destroy'])->name('booking.destroy');
+
+    // Dashboard
     Route::get('/dashboard', function () {
         $bookings = auth()->user()
             ->bookings()
@@ -38,5 +45,4 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard', compact('bookings'));
     })->name('dashboard');
 
-     Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
 });
